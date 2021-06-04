@@ -1,2 +1,2 @@
 # sue
-Super User Esclation; a sudo replacement
+Super User Escalation; a sudo replacement

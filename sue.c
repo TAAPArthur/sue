@@ -67,30 +67,55 @@ int isInGroup(struct passwd *pw, const char* target_group) {
     return 0;
 }
 
+void usage(int exitCode) {
+    printf("sue [-u user] [-g user] cmd args\n");
+    exit(exitCode);
+}
 int main(int argc, char **argv) {
-	int uid, gid, ret;
-
-	if (argc < 2 || !strcmp (argv[1], "-h")) {
-        printf("%s cmd args\n", argv[0]);
-        return 0;
+    argv++;
+    struct passwd* pw = NULL;
+    uid_t target_uid = 0;
+    gid_t target_gid = 0;
+    for(; argv[0]; argv++){
+        if(argv[0][0] != '-')
+            break;
+        if(argv[0][1] == '-') {
+            argv++;
+            break;
+        }
+        switch(argv[0][1]) {
+            case 'h':
+                usage(0);
+                break;
+            case 'l':
+                for (int i = 0; i < LEN(rules); i++)
+                    printf ("%d %d %10s %d\n", rules[i].uid, rules[i].gid, rules[i].cmd, rules[i].no_strict_path);
+                exit(0);
+            case 'u':
+            case 'g':
+                if(!argv[1])
+                    usage(1);
+                pw = getpwnam(argv[1]);
+                if(argv[0][1] == 'u')
+                    target_uid = pw->pw_uid;
+                else
+                    target_gid = pw->pw_gid;
+                argv++;
+                break;
+        }
     }
+    if(!argv[0])
+        usage(1);
+    const char* cmd = argv[0];
 
-	if (!strcmp (argv[1], "-l")) {
-		for (int i = 0; i < LEN(rules); i++)
-            printf ("%d %d %10s %d\n", rules[i].uid, rules[i].gid, rules[i].cmd, rules[i].no_strict_path);
-
-		return 0;
-	}
-
-	uid = getuid();
-	gid = getgid();
-    struct passwd* pw = getpwuid(uid);
+	uid_t uid = getuid();
+    gid_t gid = getgid();
+    pw = getpwuid(uid);
 
 	for (int i = 0; i < LEN(rules); i++) {
-		if (rules[i].cmd[0] == '*' || !strcmp(argv[1], rules[i].cmd)) {
-            if ((uid == SETUID || rules[i].uid == SETUID || rules[i].uid == uid || rules[i].uname && strcmp(pw->pw_name, rules[i].uname)) &&
-                (gid == SETGID || rules[i].gid == SETGID || rules[i].gid == gid || rules[i].gname && isInGroup(pw, rules[i].gname))) {
-                const char *cmd = rules[i].cmd[0] == '*' ? argv[1] : rules[i].cmd;
+		if (rules[i].cmd[0] == '*' || !strcmp(cmd, rules[i].cmd)) {
+            if ((uid == target_uid || rules[i].uid == uid || !rules[i].uid && !rules[i].uname || rules[i].uname && strcmp(pw->pw_name, rules[i].uname)) &&
+                (gid == target_gid || rules[i].gid == gid || !rules[i].gid && !rules[i].gname || rules[i].gname && isInGroup(pw, rules[i].gname))) {
                 if(!rules[i].no_strict_path) {
                     if(strstr(cmd, "/")) {
                         continue;
@@ -107,7 +132,7 @@ int main(int argc, char **argv) {
                     perror("Failed to set gid/uid");
                     exit(2);
                 }
-                execvp(cmd, argv+1);
+                execvp(cmd, argv);
                 perror("Failed execv");
                 exit(2);
             }

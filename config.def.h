@@ -1,6 +1,3 @@
-#define SETUID 0
-#define SETGID 0
-
 #define NGROUPS_MAX 16
 
 static struct rule_t rules[] = {

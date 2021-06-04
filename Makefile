@@ -13,4 +13,4 @@ clean:
 
 install: sue
 	install -Dt $(DESTDIR)$(PREFIX)/bin sue
-	chmod 4111 $(DESTDIR)$(PREFIX)/bin/sue
+	chmod u+s $(DESTDIR)$(PREFIX)/bin/sue

@@ -101,9 +101,10 @@ int main(int argc, char **argv) {
                     if (pw_check(pw, getpass("Password: ")) < 0)
                         exit(1);
                 }
-                if (setuid (SETUID) == -1 || setgid (SETGID) == -1 ||
-                    seteuid (SETUID) == -1 || setegid (SETGID) == -1) {
-                    perror("Failed to set uid/gid");
+
+                if (setgid (target_gid) == -1 || setegid (target_gid) == -1 ||
+                    setuid (target_uid) == -1 || seteuid (target_uid) == -1 ) {
+                    perror("Failed to set gid/uid");
                     exit(2);
                 }
                 execvp(cmd, argv+1);

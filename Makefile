@@ -6,7 +6,7 @@ config.h:
 	cp config.def.h config.h
 
 sue: sue.o config.h
-	${CC} ${LDFLAGS} sue.o -o sue -static
+	${CC} ${LDFLAGS} sue.o -o sue
 
 clean:
 	rm -f sue.o sue

@@ -1,3 +1,4 @@
+#include "sue.h"
 #define NGROUPS_MAX 16
 
 static struct rule_t rules[] = {

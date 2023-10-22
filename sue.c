@@ -6,8 +6,8 @@
 #include <string.h>
 #include <unistd.h>
 
-#include "sue.h"
 #include "config.h"
+#include "sue.h"
 
 #define LEN(A) (sizeof(A)/sizeof(A[0]))
 
@@ -71,6 +71,7 @@ void usage(int exitCode) {
     printf("sue [-u user] [-g user] cmd args\n");
     exit(exitCode);
 }
+
 int main(int argc, char **argv) {
     argv++;
     struct passwd* pw = NULL;

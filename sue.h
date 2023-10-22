@@ -1,9 +1,9 @@
-#ifndef SUE2_H
-#define SUE2_H
+#ifndef SUE_H
+#define SUE_H
 struct rule_t {
 	int uid;
-    const char* uname;
 	int gid;
+    const char* uname;
     const char* gname;
 	const char *cmd;
     int password_needed;

@@ -89,7 +89,7 @@ int main(int argc, char **argv) {
                 break;
             case 'l':
                 for (int i = 0; i < LEN(rules); i++)
-                    printf ("%d %d %10s %d\n", rules[i].uid, rules[i].gid, rules[i].cmd, rules[i].no_strict_path);
+                    printf ("%d %d %10s %d\n", rules[i].uid, rules[i].gid, rules[i].cmd, rules[i].password_needed);
                 exit(0);
             case 'u':
             case 'g':
@@ -116,12 +116,6 @@ int main(int argc, char **argv) {
 		if (rules[i].cmd[0] == '*' || !strcmp(cmd, rules[i].cmd)) {
             if ((uid == target_uid || rules[i].uid == uid || !rules[i].uid && !rules[i].uname || rules[i].uname && strcmp(pw->pw_name, rules[i].uname)) &&
                 (gid == target_gid || rules[i].gid == gid || !rules[i].gid && !rules[i].gname || rules[i].gname && isInGroup(pw, rules[i].gname))) {
-                if(!rules[i].no_strict_path) {
-                    if(strstr(cmd, "/")) {
-                        continue;
-                    }
-                    setenv("PATH", "/bin:/usr/bin", 1);
-                }
                 if(rules[i].password_needed) {
                     if (pw_check(pw, getpass("Password: ")) < 0)
                         exit(1);

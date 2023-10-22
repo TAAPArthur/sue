@@ -6,7 +6,6 @@ struct rule_t {
 	int gid;
     const char* gname;
 	const char *cmd;
-    int no_strict_path;
     int password_needed;
 };
 #endif
